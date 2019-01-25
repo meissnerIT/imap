@@ -12,7 +12,7 @@ Tested on Debian 8 (Jessie):
 
 * Link `imap` and `imap.php`:
 
-    ```
+```
 cd /usr/share/zabbix
 sudo ln -s ../../local/share/zabbix-interactive-map-19730/imap/zabbix/imap .
 sudo ln -s ../../local/share/zabbix-interactive-map-19730/imap/zabbix/imap.php .
