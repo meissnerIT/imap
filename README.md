@@ -10,9 +10,13 @@ Tested on Debian 8 (Jessie):
 
 * Clone the repository to `/usr/local/share/zabbix-interactive-map-19730/imap/` on the zabbix server. 
 
-* `sudo ln -s ../../local/share/zabbix-interactive-map-19730/imap/zabbix/imap .`
+* Link `imap` and `imap.php`:
 
-* `sudo ln -s ../../local/share/zabbix-interactive-map-19730/imap/zabbix/imap.php .`
+    ```
+cd /usr/share/zabbix
+sudo ln -s ../../local/share/zabbix-interactive-map-19730/imap/zabbix/imap .
+sudo ln -s ../../local/share/zabbix-interactive-map-19730/imap/zabbix/imap.php .
+```
 
 * Add the menu entry "Monitoring -> Interactive Map" to your zabbix installation by adding this line just before "$denied_page_requested = false;" (~line 304) in `/usr/share/zabbix/include/menu.inc.php`:
 
