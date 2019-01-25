@@ -20,7 +20,9 @@ sudo ln -s ../../local/share/zabbix-interactive-map-19730/imap/zabbix/imap.php .
 
 * Add the menu entry "Monitoring -> Interactive Map" to your zabbix installation by adding this line just before "$denied_page_requested = false;" (~line 304) in `/usr/share/zabbix/include/menu.inc.php`:
 
-  require_once dirname(__FILE__).'/../imap/menu3.inc.php';
+```
+    require_once dirname(__FILE__).'/../imap/menu3.inc.php';
+```
 
 For additional settings, locate file settings.js.template in the folder imap, rename it in settings.js and change settings to your liking.
 
