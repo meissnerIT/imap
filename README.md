@@ -1,32 +1,28 @@
 # imap
+
 ## Interactive map for Zabbix
 
-Screenshots: http://zabbiximap.lisss.ru/
-
-This version is designed for Zabbix versions 3.x
-
-In old versions of efficiency is not guaranteed and will not be further developed.
-
-For new versions the development will be output as the official release.
-
+This version is patched for Zabbix versions 4.0.
 
 ## Installation
 
-For install copy the contents of a folder zabbix in the directory of your Zabbix Server (Example, /usr/share/zabbix for Debian).
+Tested on Debian 8 (Jessie):
 
-Edit include/menu.inc.php to connect Interactive Map at standard interface
-Add this in 314 string, befor "$denied_page_requested = false;":
+* Clone the repository to `/usr/local/share/zabbix-interactive-map-19730/imap/` on the zabbix server. 
 
-	require_once dirname(__FILE__).'/../imap/menu3.inc.php';
+* `sudo ln -s ../../local/share/zabbix-interactive-map-19730/imap/zabbix/imap .`
 
-Now, the basic functionality is efficient. Go to your Zabbix and you'll see a new menu item.
+* `sudo ln -s ../../local/share/zabbix-interactive-map-19730/imap/zabbix/imap.php .`
+
+* Add the menu entry "Monitoring -> Interactive Map" to your zabbix installation by adding this line just before "$denied_page_requested = false;" (~line 304) in `/usr/share/zabbix/include/menu.inc.php`:
+
+  require_once dirname(__FILE__).'/../imap/menu3.inc.php';
 
 For additional settings, locate file settings.js.template in the folder imap, rename it in settings.js and change settings to your liking.
 
 To get an API key for Bing you need to get a Microsoft account and create a new key. Look it for details: http://msdn.microsoft.com/ru-ru/library/ff428642.aspx
 
 For work hardware icons, put png-images in folder imap/hardware. Look at file imap/hardware/readme.md for details.
-
 
 ## BD-additions
 
@@ -44,7 +40,6 @@ The second way for fans of the command line:
 
 Replace zabbixbd the name of the table with the data zabbix, username for a user with the addition of tables in the database and enter the password.
 
-
 ### For PostgreSQL 
 
 run under root:
@@ -58,3 +53,4 @@ sudo -u zabbix - act as system user 'zabbix' (otherwise PosgreSQL will not authe
 -U zabbix - database owner,
 
 -d zabbix - database name.
+

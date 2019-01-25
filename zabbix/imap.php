@@ -198,14 +198,16 @@ $showSeverity = CProfile::get('web.tr_status.filter.show_severity', TRIGGER_SEVE
 $txtSelect = CProfile::get('web.tr_status.filter.txt_select', '');
 $showChange = CProfile::get('web.tr_status.filter.status_change', 0);
 $statusChangeBydays = CProfile::get('web.tr_status.filter.status_change_days', 14);
-$ackStatus = ($config['event_ack_enable'] == EVENT_ACK_DISABLED)
-	? ZBX_ACK_STS_ANY : CProfile::get('web.tr_status.filter.ack_status', ZBX_ACK_STS_ANY);
-$showEvents = CProfile::get('web.tr_status.filter.show_events', EVENTS_OPTION_NOEVENT);
+//mm $ackStatus = ($config['event_ack_enable'] == EVENT_ACK_DISABLED)
+//mm 	? ZBX_ACK_STS_ANY : CProfile::get('web.tr_status.filter.ack_status', ZBX_ACK_STS_ANY);
+//mm $showEvents = CProfile::get('web.tr_status.filter.show_events', EVENTS_OPTION_NOEVENT);
+$ackStatus = ZBX_ACK_STS_ANY;
+$showEvents = true;
 
 // check event acknowledges
-if ($config['event_ack_enable'] == EVENT_ACK_DISABLED && $showEvents == EVENTS_OPTION_NOT_ACK) {
-	$showEvents = EVENTS_OPTION_NOEVENT;
-}
+//mm if ($config['event_ack_enable'] == EVENT_ACK_DISABLED && $showEvents == EVENTS_OPTION_NOT_ACK) {
+//mm 	$showEvents = EVENTS_OPTION_NOEVENT;
+//mm }
 
 // fetch filter from profiles
 $filter = [
@@ -551,14 +553,15 @@ if ($output!='block') {
 	$triggerWidget = (new CWidget())->setTitle(_('Interactive map'));
 
 	$rightForm = (new CForm('get'))
-		->addVar('fullscreen', $_REQUEST['fullscreen']);
+		//mm ->addVar('fullscreen', $_REQUEST['fullscreen']);
+		->addVar('fullscreen', '');
 
 	$controls = new CList();
 	$controls->addItem(array(SPACE.SPACE._('With triggers only').SPACE, new CCheckBox('with_triggers_only', $with_triggers_only, 'javascript: submit();', 1)));
 	$controls->addItem(array(SPACE.SPACE._('Control map').SPACE, new CCheckBox('control_map', $control_map, '_imap.settings.do_map_control = jQuery(\'#control_map\')[0].checked; if (_imap.settings.do_map_control) {mapBbox(_imap.bbox)};', 1)));
 	$controls->addItem([_('Group').SPACE, $pageFilter->getGroupsCB()]);
 	$controls->addItem([_('Host').SPACE, $pageFilter->getHostsCB()]);
-	$controls->addItem(get_icon('fullscreen', ['fullscreen' => $_REQUEST['fullscreen']]));
+	//mm $controls->addItem(get_icon('fullscreen', ['fullscreen' => $_REQUEST['fullscreen']]));
 
 	$rightForm->addItem($controls);
 
@@ -586,7 +589,9 @@ if ($output!='block') {
 			'groupId' => getRequest('groupid'),
 			'fullScreen' => getRequest('fullscreen')
 		],
-		'config' => $config
+		'config' => $config,
+                'profileIdx' => 'web.tr_status.filter',
+                'active_tab' => CProfile::get('web.tr_status.filter.active', 0)
 	]);
 
 	$filterForm = $filterFormView->render();
