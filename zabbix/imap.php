@@ -553,15 +553,14 @@ if ($output!='block') {
 	$triggerWidget = (new CWidget())->setTitle(_('Interactive map'));
 
 	$rightForm = (new CForm('get'))
-		//mm ->addVar('fullscreen', $_REQUEST['fullscreen']);
-		->addVar('fullscreen', '');
+		->addVar('fullscreen', $_REQUEST['fullscreen']);
 
 	$controls = new CList();
 	$controls->addItem(array(SPACE.SPACE._('With triggers only').SPACE, new CCheckBox('with_triggers_only', $with_triggers_only, 'javascript: submit();', 1)));
 	$controls->addItem(array(SPACE.SPACE._('Control map').SPACE, new CCheckBox('control_map', $control_map, '_imap.settings.do_map_control = jQuery(\'#control_map\')[0].checked; if (_imap.settings.do_map_control) {mapBbox(_imap.bbox)};', 1)));
 	$controls->addItem([_('Group').SPACE, $pageFilter->getGroupsCB()]);
 	$controls->addItem([_('Host').SPACE, $pageFilter->getHostsCB()]);
-	//mm $controls->addItem(get_icon('fullscreen', ['fullscreen' => $_REQUEST['fullscreen']]));
+	$controls->addItem(get_icon('fullscreen', ['fullscreen' => $_REQUEST['fullscreen']]));
 
 	$rightForm->addItem($controls);
 
@@ -587,7 +586,8 @@ if ($output!='block') {
 			'showMaintenance' => $showMaintenance,
 			'hostId' => getRequest('hostid'),
 			'groupId' => getRequest('groupid'),
-			'fullScreen' => getRequest('fullscreen')
+			'fullScreen' => getRequest('fullscreen'),
+                        'show_suppressed' => ZBX_PROBLEM_SUPPRESSED_FALSE
 		],
 		'config' => $config,
                 'profileIdx' => 'web.tr_status.filter',
