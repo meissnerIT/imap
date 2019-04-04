@@ -50,7 +50,7 @@ Replace zabbixbd the name of the table with the data zabbix, username for a user
 
 run under root:
 
-`sudo -u zabbix psql -U zabbix -W -d zabbix < table-postgresql.sql`
+`sudo -u zabbix psql -U zabbix -W -d zabbix < tables-postgresql.sql`
 
 where
 
