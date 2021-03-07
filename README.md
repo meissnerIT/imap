@@ -1,6 +1,6 @@
 # imap
 
-## Interactive map for Zabbix
+## Interactive map for Zabbix, google map zabbix integration, geomap zabbix
 
 This version is patched for Zabbix versions 5.0.
 
