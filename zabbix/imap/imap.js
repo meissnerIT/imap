@@ -39,10 +39,13 @@
 		var overlayMaps = new Object;
 		
 		baseMaps["OpenStreetMap"] = new L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:18, attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
-		baseMaps["OpenCycleMap"] = new L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {maxZoom:18, attribution: 'Maps &copy; <a href="http://www.thunderforest.com">Thunderforest</a>, Data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
+	//	baseMaps["OpenCycleMap"] = new L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {maxZoom:18, attribution: 'Maps &copy; <a href="http://www.thunderforest.com">Thunderforest</a>, Data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
 		baseMaps["Stamen B&W"] = new L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {maxZoom:18, subdomains:'abcd', attribution: 'Map Data: © <a href="http://maps.stamen.com/" target="_blank">Stamen.com</a>'});
 		baseMaps["Kosmosnimki.ru OSM"] = new L.tileLayer('https://tilessputnik.ru/{z}/{x}/{y}.png', {maxZoom:18, subdomains:'abcdef', attribution: 'Map Data: © <a href="http://osm.kosmosnimki.ru/" target="_blank">osm.kosmosnimki.ru</a>'});
-		
+	//overlay layers
+		overlayMaps["OpenRailwayMap"] = new L.tileLayer('https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {maxZoom:18, attribution: '&copy; <a href="https://openrailwaymap.org/copyright">OpenRailwayMap</a> contributors'});
+		overlayMaps["OpenWeatherMapMap"] = new L.tileLayer('https:////b.sat.owm.io/vane/2.0/weather/TA2/{z}/{x}/{y}?appid=9de243494c0b295cca9337e1e96b00e2&fill_bound', {maxZoom:18, attribution: '&copy; <a href="https://OpenWeatherMap.org/copyright">OpenWeatherMapMap</a> contributors'});
+
 		if (_imap.settings.bing_apikey) {
 			baseMaps["Bing Satellite"] = new L.BingLayer(_imap.settings.bing_apikey, {culture: _imap.settings.lang, type: 'Aerial'});
 			baseMaps["Bing Hybrid"] = new L.BingLayer(_imap.settings.bing_apikey, {culture: _imap.settings.lang, type: 'AerialWithLabels'});
@@ -68,7 +71,7 @@
 	
 	
 	_imap.markers = new L.MarkerClusterGroup({
-		maxClusterRadius: 30,
+		maxClusterRadius: 23,
 		spiderfyDistanceMultiplier:_imap.settings.spiderfyDistanceMultiplier,
 		iconCreateFunction: function (cluster) {
 			var cmarkers = cluster.getAllChildMarkers();
@@ -999,23 +1002,22 @@
 			if (_imap.markersList[host_id].host_info.error) jQuery('#hostPopup'+host_id+' .hosterror').html('Error: '+ _imap.markersList[host_id].host_info.error);
 			
 			var shh = '';
-			if (_imap.markersList[host_id].host_info) jQuery(_imap.markersList[host_id].host_info.scripts).each(function() { shh=shh+'{&quot;name&quot;:&quot;'+this.name+'&quot;,&quot;scriptid&quot;:&quot;'+this.scriptid+'&quot;,&quot;confirmation&quot;:&quot;&quot;},'; });
+			if (_imap.markersList[host_id].host_info) jQuery(_imap.markersList[host_id].host_info.scripts).each(function(el) { shh=shh+'{&quot;name&quot;:&quot;'+this.name+'&quot;,&quot;scriptid&quot;:&quot;'+this.scriptid+'&quot;,&quot;confirmation&quot;:&quot;&quot;},'; });
 			var hh = '<span class="link_menu" data-menu-popup="{&quot;type&quot;:&quot;host&quot;,&quot;hostid&quot;:&quot;'+host_id+'&quot;,&quot;showGraphs&quot;:true,&quot;showScreens&quot;:true,&quot;showTriggers&quot;:true,&quot;hasGoTo&quot;:true,&quot;scripts&quot;:['+shh.slice(0, -1)+']}">'+escapeHtml(_imap.markersList[host_id].marker.options.host_name)+'</span>';
 			var hardware = ((_imap.markersList[host_id].marker.options.hardware && _imap.settings.show_icons)?'<img onerror="this.src=\'imap/hardware/none.png\';" title="'+_imap.markersList[host_id].marker.options.hardware+'" src=\'imap/hardware/'+_imap.markersList[host_id].marker.options.hardware+'.png\' class=hardwareIcon>':'');
 			jQuery('#hostPopup'+host_id+' .hostname').html(hardware +' ' + hh);
 			
 			
 			jQuery('#hostPopup'+host_id+' .host_interfaces').html('');
-			var intftype = {'1': 'Agent', '2':'SNMP', '3':'IPMI', '4':'JMX'};
+			var intftype = {'1': 'IP', '2':'SNMP', '3':'IPMI', '4':'JMX'};
 			var shh = '';
-			_imap.markersList[host_id].host_info.interfaces.each(function(el) {
+
+			jQuery(_imap.markersList[host_id].host_info.interfaces).each(function(el) {
 					shh = shh + '<div class=host_interfaces_line>';
-					var addr = el.dns;
-					if ( (el.useip=='1') && (el.ip!=='') ) 
-						addr = el.ip;
-					shh = shh + '<b>' + intftype[el.type] + '</b> ' + addr + ':' + el.port;
+					{ shh=shh + intftype[this.type]+':'+this.ip+':'+this.port+''; }
 					shh = shh + '</div>';
 			});
+			
 			jQuery('#hostPopup'+host_id+' .host_interfaces').html(shh);
 			
 			
@@ -1173,8 +1175,8 @@
 			var host_lat = false;
 			var host_lon = false;
 		} else {
-			var host_lat = +(host.inventory.location_lat).replace(',', '.');
-			var host_lon = +(host.inventory.location_lon).replace(',', '.');
+			var host_lat = host.inventory.location_lat;
+			var host_lon = host.inventory.location_lon;
 		};
 
 		var hardware = host.inventory[_imap.settings.hardware_field];
@@ -1224,7 +1226,7 @@
 		container = L.DomUtil.create('span', 'graphPopupWindow');
 		jQuery(container).append(
 			jQuery("<iframe />").attr("src", url).prop('height','100%').prop('width','100%').css('bottom','0').css('right','0').css('top','0').css('left','0').css('position','absolute')
-		).dialog({maxWidth:'100%', maxHeight:'100%', width:800, height:650, resizable:true})
+		).dialog({maxWidth:'100%', maxHeight:'100%', width:1050, height:420, resizable:true})
 		.on('close',function(){ jQuery(this).remove(); });
 	};
 	
@@ -1260,7 +1262,7 @@
 	  
   
 		jQuery('#hostItems'+hh).html();
-
+		
 		return false;
 	};
 	
@@ -1280,20 +1282,16 @@
 				for (nn in data) {
 					if (data[nn].graphid) {
 						graph = data[nn];
-						graphs[graphs.length] = {label: escapeHtml(graph.name), url: 'charts.php?graphid='+graph.graphid, clickCallback: function(){
+						graphs[graphs.length] = {label: escapeHtml(graph.name), url: 'chart2.php?graphid='+graph.graphid, clickCallback: function(){
 							var tn = jQuery(this).data('graphId');
-							popupFrame('charts.php?ispopup=1&graphid='+tn);
+							popupFrame('chart2.php?ispopup=1&graphid='+tn);
 							return false;
 						  
 						}, data: {graphId: +graph.graphid} };
 					};
 				};
 				
-				if (_imap.zabbixversion.substr(0,3)=='2.2') {
-					var lastdd = { label: mlocale('Latest data'), url: 'latest.php?hostid='+hh+'&groupid=0', clickCallback: function(){ popupFrame('latest.php?hostid'+hh+'&groupid=0'); return false; } };
-				} else {
-					var lastdd = { label: mlocale('Latest data'), url: 'latest.php?hostids%5B%5D='+hh+'&filter_set=Filter', clickCallback: function(){ popupFrame('latest.php?hostids%5B%5D='+hh+'&filter_set=Filter'); return false; } };
-				};
+				var lastdd = { label: mlocale('Latest data'), url: 'zabbix.php?action=latest.view&filter_hostids%5B%5D='+hh+'&filter_set=1', clickCallback: function(){ popupFrame('zabbix.php?action=latest.view&filter_hostids%5B%5D='+hh+'&filter_set=1'); return false; } };
 				
 				var hostinv = { label: mlocale('Host inventory'), url: 'hostinventories.php?hostid='+hh, clickCallback: function(){ popupFrame('hostinventories.php?ispopup=1&hostid='+hh); return false; } };
 				var ltrig = { label: mlocale('Triggers'), url: 'tr_status.php?hostid='+hh, clickCallback: function(){ popupFrame('tr_status.php?ispopup=1&hostid='+hh); return false; } };
@@ -1309,7 +1307,7 @@
 				    ]
 				};
 				
-				jQuery(container).bind('click',function(event){ datas = [{label:mlocale('Host view')}, {label: mlocale('Graphs'), items: graphs}, lastdd, hostinv, ltrig, {label:'Config'}, chost]; menuPopup2(datas, event); });
+				jQuery(container).bind('click',function(event){ datas = [{label:mlocale('Host view')}, {label: mlocale('Graphs'), items: graphs}, lastdd, hostinv, ltrig, {label:mlocale('Config')}, chost]; menuPopup2(datas, event); });
 				jQuery(container).html(mlocale('Tools'));
 				jQuery('.link_menu', '#hostItems'+hh).remove();
 				jQuery('#hostItems'+hh).append(container);
@@ -1858,7 +1856,7 @@
 		_imap.Controls['scale'] = L.control.scale({position:setMapCorner(_imap.mapcorners['scale']),metric:true});
 		_imap.Controls['measure'] = L.control.measure({position:setMapCorner(_imap.mapcorners['measure'])})
 	
-		get_last_messages();
+	//	get_last_messages();
 		
 		var imapMenu = L.Control.extend({
 			options: {
