@@ -6,7 +6,7 @@ $zbx_menu['view']['pages'][]=
 
 			array(
 				'url' => 'imap.php',
-				'label' => _('Interactive map')
+				'label' => _('Карта')
 			);
 textdomain("frontend");
 

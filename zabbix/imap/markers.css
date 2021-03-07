@@ -855,6 +855,7 @@ a.button {
 	background: #fff;
 	border-radius: 5px;
 	padding: 5px;
+	display: none;
 }
 
 .imenu-control .button {
